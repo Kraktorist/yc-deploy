@@ -1,0 +1,110 @@
+folder_id: b1gla0rq0g8628fo9b0o
+inventory_file: inventory.yaml
+network:
+  name: dev-bingo-network
+  subnets: 
+    dev-bingo-subnet:
+      v4_cidr_blocks: ["10.5.0.0/24"]
+      zone: ru-central1-a
+
+# registries:
+#   default:
+#     labels:
+#       env: prod
+
+service_accounts:
+  dev-bingo-ig-sa:
+    roles: 
+      - editor # https://cloud.yandex.com/en/docs/compute/quickstart/ig
+      #  To be able to create, update, and delete group instances, assign the editor role to the service account. 
+
+instance_groups:
+  dev-bingo:
+    ansible_groups:
+      - bingo
+    service_account: dev-bingo-ig-sa
+    resources:
+      cores: 2
+      memory: 1 #Gb
+      disk_size: 30 #Gb
+    network:
+      subnet: dev-bingo-subnet
+      nat: false
+    metadata: 
+      # treated as a file path
+      docker-compose: 
+        file: ../build/prod-docker-compose.yml
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub
+    node_count: 2
+    allocation_policy: ["ru-central1-a"]
+    deploy_policy:
+      max_unavailable: 1
+      max_expansion: 1
+
+instances:
+  dev-bastion:
+    ansible_groups:
+      - bastion
+    family_id: ubuntu-2204-lts
+    resources:
+      cores: 2
+      memory: 1 #Gb
+      disk_size: 30 #Gb
+    network:
+      subnet: dev-bingo-subnet
+      nat: true
+    metadata: 
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub
+  dev-nginx:
+    ansible_groups:
+      - balancer
+    family_id: ubuntu-2204-lts
+    resources:
+      cores: 2
+      memory: 1 #Gb
+      disk_size: 30 #Gb
+    network:
+      subnet: dev-bingo-subnet
+      nat: true
+    metadata: 
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub
+  dev-postgresql:
+    ansible_groups:
+      - postgresql
+    family_id: ubuntu-2204-lts
+    resources:
+      cores: 2
+      core_fraction: 50
+      memory: 8 #Gb
+      disk_size: 30 #Gb
+      disk_type: "network-hdd"
+      secondary_disk_size: 5
+    network:
+      subnet: dev-bingo-subnet
+      nat: false
+    metadata: 
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub    
+  dev-monitoring:
+    ansible_groups:
+      - monitoring
+    family_id: ubuntu-2204-lts
+    resources:
+      cores: 2
+      memory: 4 #Gb
+      disk_size: 30 #Gb
+    network:
+      subnet: dev-bingo-subnet
+    metadata: 
+      docker-compose: 
+        file: ../envs/dev/monitoring.yml #TODO think about it
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub

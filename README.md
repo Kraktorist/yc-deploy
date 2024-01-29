@@ -1,0 +1,1 @@
+https://practicum.yandex.ru/profile/ycloud-deploy/
