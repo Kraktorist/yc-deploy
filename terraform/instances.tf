@@ -9,12 +9,12 @@ locals {
 }
 
 data "yandex_compute_image" "image" {
-  for_each = local.config.instances
+  for_each = try(local.config.instances, {})
   family   = try(each.value.image_family, "container-optimized-image")
 }
 
 resource "yandex_compute_instance" "instance" {
-  for_each    = local.config.instances
+  for_each    = try(local.config.instances, {})
   name        = each.key
   platform_id = "standard-v2"
   zone = [for v in yandex_vpc_subnet.network : v.zone if each.value.network.subnet == v.name][0]
@@ -51,7 +51,7 @@ resource "yandex_compute_instance" "instance" {
 }
 
 resource "yandex_compute_disk" "secondary_disk" {
-  for_each = { for k, v in local.config.instances : k => v if contains(keys(v.resources), "secondary_disk_size")  }
+  for_each = { for k, v in try(local.config.instances, {}) : k => v if contains(keys(v.resources), "secondary_disk_size")  }
   name     = "${each.key}-secondary-disk"
   type     = "network-ssd"
   size = each.value.resources.secondary_disk_size
