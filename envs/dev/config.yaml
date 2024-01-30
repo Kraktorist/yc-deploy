@@ -10,6 +10,10 @@ service_accounts:
   yc-deploy-sa:
     roles: 
       - editor
+  k8s-main-cp-sa:
+    roles:
+      - editor
+  k8s-main-node-sa:
  
 instances:
   dev-bastion:
@@ -27,3 +31,18 @@ instances:
       ssh-keys: 
         username: ubuntu
         file: ~/.ssh/id_rsa.pub
+
+kubernetes:
+  main:
+    version: 1.26
+    subnet: yc-deploy-subnet
+    public_ip: true
+    service_account_name: k8s-main-cp-sa
+    node_service_account_name: k8s-main-node-sa
+    instance_template:
+      name: ig
+      count: 2
+      cores: 2
+      memory: 4
+      disk_size: 40
+      container_runtime: containerd
