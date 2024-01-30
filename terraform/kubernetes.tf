@@ -1,5 +1,5 @@
 resource "yandex_kubernetes_cluster" "cluster" {
-  depends_on = [ yandex_iam_service_account.service-account ]
+  depends_on = [ yandex_resourcemanager_folder_iam_binding.role-binding ]
   for_each = try(local.config.kubernetes, {})
   name        = each.key
 
