@@ -29,3 +29,5 @@ envs/*/inventory.yaml
 
 # Ignored vscode files
 .vscode/
+
+tmp/
