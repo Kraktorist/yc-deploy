@@ -24,3 +24,11 @@ resource "yandex_vpc_subnet" "network" {
   zone           = each.value.zone
   route_table_id = yandex_vpc_route_table.rt.id
 }
+
+resource "yandex_vpc_address" "addr" {
+  for_each       = local.config.network.ip_addresses
+  name = each.key
+  external_ipv4_address  {
+    zone_id = each.value.zone
+  }
+}

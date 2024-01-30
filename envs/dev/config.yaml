@@ -4,7 +4,9 @@ network:
     yc-deploy-subnet:
       v4_cidr_blocks: ["10.5.0.0/24"]
       zone: ru-central1-a
-
+  ip_addresses:
+    alb:
+      zone: ru-central1-a
 
 service_accounts:
   yc-deploy-sa:
@@ -14,6 +16,12 @@ service_accounts:
     roles:
       - editor
   k8s-main-node-sa:
+  ingress-controller:
+    roles:
+      - alb.editor
+      - vpc.publicAdmin
+      - certificate-manager.certificates.downloader
+      - compute.viewer 
  
 instances:
   dev-bastion:
