@@ -1,4 +1,5 @@
-resource "yandex_kubernetes_cluster" "zonal_cluster" {
+resource "yandex_kubernetes_cluster" "cluster" {
+  depends_on = [ yandex_iam_service_account.service-account ]
   for_each = try(local.config.kubernetes, {})
   name        = each.key
 
@@ -53,7 +54,7 @@ resource "yandex_kubernetes_cluster" "zonal_cluster" {
 
 resource "yandex_kubernetes_node_group" "node_group" {
   for_each = try(local.config.kubernetes, {})
-  cluster_id = [for v in yandex_kubernetes_cluster.zonal_cluster : v.id if each.key == v.name][0]
+  cluster_id = [for v in yandex_kubernetes_cluster.cluster : v.id if each.key == v.name][0]
   name        = each.value.instance_template.name
   version     = try(each.value.node_version, each.value.version)
 
