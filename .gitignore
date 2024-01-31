@@ -31,3 +31,4 @@ envs/*/inventory.yaml
 .vscode/
 
 tmp/
+sa-key.json
