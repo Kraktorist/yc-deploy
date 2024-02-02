@@ -51,6 +51,27 @@ oci://cr.yandex/yc-marketplace/yandex-cloud/yc-alb-ingress/yc-alb-ingress-contro
 rm -rf sa-key.json
 ```
 
+## gitlab
+
+Gitlab is installed inside of the same kubernetes cluster. Such installation requires a little bit more resources.
+
+```
+helm repo add gitlab https://charts.gitlab.io/
+helm install gitlab gitlab/gitlab \
+  -n gitlab \
+  --create-namespace \
+  --set global.edition=ce \
+  --set global.hosts.domain=gitlab.qamo.ru \
+  --set certmanager-issuer.email=qamo@example.com \
+  --set prometheus.install=false \
+  --set global.ingress.enabled=true \
+  --set certmanager.install.enabled=false \
+  --set gitlab-runner.gitlabUrl=http://gitlab-webservice-default.gitlab:8080 
+```
+
+Pay your attention the installation creates NLB and disks for PV/PVCs.
+
+
 ## demo httpbin deployment
 
 Deploy the following manifests and check that ALB has created. Then add DNS or /etc/hosts entry to check the application deployed.
@@ -132,3 +153,4 @@ spec:
 
 ```
 </details>
+
