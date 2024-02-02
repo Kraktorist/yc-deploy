@@ -162,14 +162,15 @@ cat <<EOF >values.yaml
 configs:
   repositories:
     infra:
-      password: <AccessToken>
+      password: glpat-GyP-RZgFRhQEY_DLWmyN
       project: default
       type: git
       url: http://gitlab-webservice-default.gitlab:8080/yc-courses/infra.git
       username: gitlab-ci-token 
 EOF
 
-helm install -n argocd \
+helm update -n argocd \
+  --install \
   --create-namespace \
   argocd \
   oci://cr.yandex/yc-marketplace/yandex-cloud/argo/chart/argo-cd \
