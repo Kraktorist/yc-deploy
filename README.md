@@ -158,10 +158,21 @@ spec:
 
 ```
 export HELM_EXPERIMENTAL_OCI=1 && \
+cat <<EOF >values.yaml
+configs:
+  repositories:
+    infra:
+      password: <AccessToken>
+      project: default
+      type: git
+      url: http://gitlab-webservice-default.gitlab:8080/yc-courses/infra.git
+      username: gitlab-ci-token 
+EOF
 
 helm install -n argocd \
   --create-namespace \
   argocd \
   oci://cr.yandex/yc-marketplace/yandex-cloud/argo/chart/argo-cd \
-  --version=5.46.8-6
+  --version=5.46.8-6 \
+  --values values.yaml
 ```
