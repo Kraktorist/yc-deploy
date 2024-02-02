@@ -154,3 +154,14 @@ spec:
 ```
 </details>
 
+## ArgoCD
+
+```
+export HELM_EXPERIMENTAL_OCI=1 && \
+
+helm install -n argocd \
+  --create-namespace \
+  argocd \
+  oci://cr.yandex/yc-marketplace/yandex-cloud/argo/chart/argo-cd \
+  --version=5.46.8-6
+```
