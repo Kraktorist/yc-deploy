@@ -47,6 +47,8 @@ helm install \
 yc-alb \
 oci://cr.yandex/yc-marketplace/yandex-cloud/yc-alb-ingress/yc-alb-ingress-controller-chart \
 --version v0.1.17
+
+rm -rf sa-key.json
 ```
 
 ## demo httpbin deployment
