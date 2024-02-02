@@ -23,22 +23,22 @@ service_accounts:
       - certificate-manager.certificates.downloader
       - compute.viewer 
  
-instances:
-  dev-bastion:
-    ansible_groups:
-      - bastion
-    family_id: ubuntu-2204-lts
-    resources:
-      cores: 2
-      memory: 1 #Gb
-      disk_size: 30 #Gb
-    network:
-      subnet: yc-deploy-subnet
-      nat: true
-    metadata: 
-      ssh-keys: 
-        username: ubuntu
-        file: ~/.ssh/id_rsa.pub
+# instances:
+#   dev-bastion:
+#     ansible_groups:
+#       - bastion
+#     family_id: ubuntu-2204-lts
+#     resources:
+#       cores: 2
+#       memory: 1 #Gb
+#       disk_size: 30 #Gb
+#     network:
+#       subnet: yc-deploy-subnet
+#       nat: true
+#     metadata: 
+#       ssh-keys: 
+#         username: ubuntu
+#         file: ~/.ssh/id_rsa.pub
 
 kubernetes:
   main:
