@@ -49,8 +49,8 @@ kubernetes:
     node_service_account_name: k8s-main-node-sa
     instance_template:
       name: ig
-      count: 2
-      cores: 2
-      memory: 4
+      count: 4
+      cores: 4
+      memory: 8
       disk_size: 40
       container_runtime: containerd
