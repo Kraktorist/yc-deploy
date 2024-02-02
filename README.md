@@ -169,7 +169,7 @@ configs:
       username: gitlab-ci-token 
 EOF
 
-helm update -n argocd \
+helm upgrade -n argocd \
   --install \
   --create-namespace \
   argocd \
