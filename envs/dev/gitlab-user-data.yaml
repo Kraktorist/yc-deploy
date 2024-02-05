@@ -1,0 +1,4 @@
+#cloud-config
+runcmd:
+  - mkdir -p /srv/gitlab
+  

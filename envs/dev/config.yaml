@@ -23,22 +23,42 @@ service_accounts:
       - certificate-manager.certificates.downloader
       - compute.viewer 
  
-# instances:
-#   dev-bastion:
-#     ansible_groups:
-#       - bastion
-#     family_id: ubuntu-2204-lts
-#     resources:
-#       cores: 2
-#       memory: 1 #Gb
-#       disk_size: 30 #Gb
-#     network:
-#       subnet: yc-deploy-subnet
-#       nat: true
-#     metadata: 
-#       ssh-keys: 
-#         username: ubuntu
-#         file: ~/.ssh/id_rsa.pub
+instances:
+  dev-bastion:
+    ansible_groups:
+      - bastion
+    family_id: ubuntu-2204-lts
+    resources:
+      cores: 2
+      memory: 1 #Gb
+      disk_size: 30 #Gb
+    network:
+      subnet: yc-deploy-subnet
+      nat: true
+    metadata: 
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub
+  gitlab:
+    ansible_groups:
+      - bastion
+    family_id: ubuntu-2204-lts
+    resources:
+      cores: 2
+      memory: 4 #Gb
+      disk_size: 60 #Gb
+    network:
+      subnet: yc-deploy-subnet
+      nat: true
+    metadata: 
+      ssh-keys: 
+        username: ubuntu
+        file: ~/.ssh/id_rsa.pub
+      docker-compose:
+        file: ./gitlab-docker-compose.yaml
+      user-data:
+        file: ./gitlab-user-data.yaml
+
 
 kubernetes:
   main:
@@ -49,8 +69,8 @@ kubernetes:
     node_service_account_name: k8s-main-node-sa
     instance_template:
       name: ig
-      count: 4
-      cores: 4
-      memory: 8
+      count: 2
+      cores: 2
+      memory: 4
       disk_size: 40
       container_runtime: containerd

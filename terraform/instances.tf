@@ -2,7 +2,8 @@ locals {
   metadata = {
     for ig_name, instance_group in merge(try(local.config.instance_groups, {}), try(local.config.instances, {})) :
     ig_name => {
-      docker-compose = coalescelist([for key, entry in instance_group.metadata : file(entry.file) if key == "docker-compose"], [null])[0]
+      docker-compose = coalescelist([for key, entry in instance_group.metadata : file("${var.env_folder}/${entry.file}") if key == "docker-compose"], [null])[0]
+      user-data      = coalescelist([for key, entry in instance_group.metadata : file("${var.env_folder}/${entry.file}") if key == "user-data"], [null])[0]
       ssh-keys       = coalescelist([for key, entry in instance_group.metadata : "${entry.username}:${file(entry.file)}" if key == "ssh-keys"], [null])[0]
     }
   }
