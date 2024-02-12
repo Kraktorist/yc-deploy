@@ -8,13 +8,28 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         # Add any other gitlab.rb configuration here, each on its own line
-        external_url 'http://gitlab.qamo.ru'
+        external_url 'https://gitlab.qamo.ru'
+        letsencrypt['enabled'] = false
+        nginx['enable'] = true
+        nginx['redirect_http_to_https'] = false
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
     ports:
-      - '80:80'
-      - '443:443'
+      # - '8080:80'
+      # - '443:443'
       - '2242:2242'
     volumes:
       - '/srv/gitlab/config:/etc/gitlab'
       - '/srv/gitlab/logs:/var/log/gitlab'
       - '/srv/gitlab/data:/var/opt/gitlab'
     shm_size: '256m'
+  nginx:
+    image: nginx:1.25.3
+    container_name: nginx
+    volumes:
+      - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /var/log/nginx:/var/log/nginx
+      - /srv/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"

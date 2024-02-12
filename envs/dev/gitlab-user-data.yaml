@@ -1,4 +1,54 @@
 #cloud-config
 runcmd:
-  - mkdir -p /srv/gitlab
+  - /srv/cloud-init.sh
+
+write_files:
+- path: /srv/cloud-init.sh
+  permissions: '0740'
+  content: |
+    #!/bin/bash
+    mkdir -p /srv/gitlab
+    mkdir -p /srv/ssl
+    openssl genrsa -out /srv/ssl/rootCA.key 4096
+    openssl req -x509 -new -nodes -key /srv/ssl/rootCA.key -sha256 -days 1024 \
+    -subj "/C=RU/O=qamo/OU=Lab Co./CN=*.qamo.ru" \
+    -out /srv/ssl/rootCA.crt
+    openssl genrsa -out /srv/ssl/_.qamo.ru.key 2048
+    openssl req -new -sha256 \
+        -key /srv/ssl/_.qamo.ru.key \
+        -subj "/CN=qamo.ru" \
+        -reqexts SAN \
+        -config <(cat /etc/ssl/openssl.cnf \
+            <(printf "\n[SAN]\nsubjectAltName=DNS:*.qamo.ru")) \
+        -out /srv/ssl/qamo.ru.csr
+    openssl x509 -req \
+    -extfile <(printf "subjectAltName=DNS:*.qamo.ru") \
+    -days 720 \
+    -in /srv/ssl/qamo.ru.csr \
+    -CA /srv/ssl/rootCA.crt \
+    -CAkey /srv/ssl/rootCA.key \
+    -CAcreateserial \
+    -out /srv/ssl/_.qamo.crt
+- path: /srv/nginx/conf.d/gitlab.conf
+  content: |
+    upstream gitlab {
+      server gitlab;
+    }
+    server {
+        resolver 127.0.0.11;
+        listen       443 ssl;
+        ssl_certificate /etc/nginx/ssl/_.qamo.crt;
+        ssl_certificate_key /etc/nginx/ssl/_.qamo.ru.key;
+        server_name  gitlab.qamo.ru;
+        location / {
+            proxy_set_header        Host $host;
+            proxy_set_header        X-Real-IP $remote_addr;
+            proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header        X-Forwarded-Proto $scheme;
+            proxy_pass                  http://gitlab:80/$request_uri;
+            proxy_read_timeout     90;
+        }
+        error_log   /var/log/nginx/qamo_error.log error;
+        access_log  /var/log/nginx/qamo_access.log;
+    }
   
