@@ -74,3 +74,13 @@ kubernetes:
       memory: 4
       disk_size: 40
       container_runtime: containerd
+    # not implemented
+    # helm_release:
+    #   ya-alb:
+    #     namespace: ya-alb
+    #     repository: fff
+    #     version:
+    #     chart: 
+    #     values_file: ya-alb.yaml
+    #     values:
+          
