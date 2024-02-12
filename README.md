@@ -22,7 +22,7 @@ Yandex.Cloud is deployed using terraform. So the following prerequisites are req
 ### kubeconfig generating
 
 ```
-yc managed-kubernetes cluster get-credentials --name=main --external
+yc managed-kubernetes cluster get-credentials --name=main --external --force
 ```
 
 ### ya.alb deployment
@@ -52,6 +52,13 @@ rm -rf sa-key.json
 ```
 
 ## gitlab
+
+### Standalone Installation
+
+Gitlab can be installed as a `docker-compose` installation on an ec2 instance.  
+See [this config](./envs/dev/config.yaml)
+
+### Kubernetes Installation
 
 Gitlab is installed inside of the same kubernetes cluster. Such installation requires a little bit more resources.
 
@@ -156,16 +163,18 @@ spec:
 
 ## ArgoCD
 
+### Installation 
+
 ```
 export HELM_EXPERIMENTAL_OCI=1 && \
 cat <<EOF >values.yaml
 configs:
   repositories:
     infra:
-      password: glpat-GyP-RZgFRhQEY_DLWmyN
+      password: glpat-bNnGG_sACasjQfreMoKH
       project: default
       type: git
-      url: http://gitlab-webservice-default.gitlab:8080/yc-courses/infra.git
+      url: http://10.5.0.6/yc-courses/infra.git
       username: gitlab-ci-token 
 EOF
 
@@ -176,4 +185,5 @@ helm upgrade -n argocd \
   oci://cr.yandex/yc-marketplace/yandex-cloud/argo/chart/argo-cd \
   --version=5.46.8-6 \
   --values values.yaml
+rm -rf values.yaml
 ```
