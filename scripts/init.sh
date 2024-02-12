@@ -44,7 +44,7 @@ for i in "$@"; do
 done
 
 if [ -z ${FOLDER} ]; then
-  FOLDER=qamo
+  FOLDER=test
   echo $(yellow "WARNING! Parameter --folder is not set. Default value --folder=${FOLDER} will be used.")
 fi
 if [ -z ${SERVICE_ACCOUNT} ]; then
