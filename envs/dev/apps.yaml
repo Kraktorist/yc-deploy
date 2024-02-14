@@ -1,0 +1,6 @@
+spec:
+  source:
+    repoURL: https://10.5.0.7/yc-courses/infra.git
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc

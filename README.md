@@ -102,6 +102,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: httpbin
+  namespace: httpbin
   labels:
     app: httpbin
 spec:
@@ -125,6 +126,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: httpbin
+  namespace: httpbin
 spec:
   type: NodePort
   selector:
@@ -167,32 +169,41 @@ spec:
 ```
 </details>
 
+## sops
+
+```
+age-keygen -o ~/.sops.key
+export SOPS_AGE_KEY_FILE=~/.sops.key
+export SOPS_AGE_RECIPIENTS=<публичный ключ, который распечатала команда выше> 
+export env=dev
+```
+
+```
+kubectl -n argocd create secret generic helm-secrets-private-keys --from-file==${SOPS_AGE_KEY_FILE}
+```
+
+for encrypting:
+
+```
+helm secrets enc envs/${env}/argocd.yaml
+```
+
+
 ## ArgoCD
 
 ### Installation 
 
-```
-export HELM_EXPERIMENTAL_OCI=1 && \
-cat <<EOF >values.yaml
-configs:
-  repositories:
-    infra:
-      password: glpat-NEf8fUP_iU3Ea8yQXvvx
-      project: default
-      type: git
-      url: https://10.5.0.7/yc-courses/infra.git
-      username: gitlab-ci-token
-      insecure: "true"
-EOF
 
-helm upgrade -n argocd \
+```
+export HELM_EXPERIMENTAL_OCI=1
+export env=dev
+helm secrets upgrade -n argocd \
   --install \
   --create-namespace \
   argocd \
   oci://cr.yandex/yc-marketplace/yandex-cloud/argo/chart/argo-cd \
   --version=5.46.8-6 \
-  --values values.yaml
-rm -rf values.yaml
+  --values envs/${env}/argocd.yaml
 ```
 
 ### Initial password
