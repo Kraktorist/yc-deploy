@@ -58,6 +58,12 @@ rm -rf sa-key.json
 Gitlab can be installed as a `docker-compose` installation on an ec2 instance.  
 See [this config](./envs/dev/config.yaml)
 
+Initial root password:
+
+```
+sudo cat /srv/gitlab/config/initial_root_password
+```
+
 ### Kubernetes Installation
 
 Gitlab is installed inside of the same kubernetes cluster. Such installation requires a little bit more resources.
@@ -171,11 +177,12 @@ cat <<EOF >values.yaml
 configs:
   repositories:
     infra:
-      password: glpat-bNnGG_sACasjQfreMoKH
+      password: glpat-NEf8fUP_iU3Ea8yQXvvx
       project: default
       type: git
-      url: http://10.5.0.6/yc-courses/infra.git
-      username: gitlab-ci-token 
+      url: https://10.5.0.7/yc-courses/infra.git
+      username: gitlab-ci-token
+      insecure: "true"
 EOF
 
 helm upgrade -n argocd \
@@ -186,4 +193,10 @@ helm upgrade -n argocd \
   --version=5.46.8-6 \
   --values values.yaml
 rm -rf values.yaml
+```
+
+### Initial password
+
+```
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
